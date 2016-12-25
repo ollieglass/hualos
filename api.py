@@ -31,9 +31,9 @@ class ServerSentEvent(object):
     def encode(self):
         if not self.data:
             return ""
-        lines = ["%s: %s" % (v, k) 
-                 for k, v in self.desc_map.iteritems() if k]
-        
+        lines = ["%s: %s" % (v, k)
+                 for k, v in self.desc_map.items() if k]
+
         return "%s\n\n" % "\n".join(lines)
 
 @app.route("/publish/epoch/end/", methods=['POST'])
@@ -48,7 +48,7 @@ def publish():
         msg = str(time.time())
         for sub in subscriptions[:]:
             sub.put(payload)
-    
+
     gevent.spawn(notify)
     return "OK"
 
