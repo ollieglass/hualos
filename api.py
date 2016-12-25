@@ -31,24 +31,20 @@ class ServerSentEvent(object):
     def encode(self):
         if not self.data:
             return ""
-        lines = ["%s: %s" % (v, k) 
+        lines = ["%s: %s" % (v, k)
                  for k, v in self.desc_map.iteritems() if k]
-        
+
         return "%s\n\n" % "\n".join(lines)
 
 @app.route("/publish/epoch/end/", methods=['POST'])
 def publish():
-    payload = request.form.get('data')
-    try:
-        data = json.loads(payload)
-    except:
-        return {'error':'invalid payload'}
+    payload = request.get_json()['data']
 
     def notify():
         msg = str(time.time())
         for sub in subscriptions[:]:
             sub.put(payload)
-    
+
     gevent.spawn(notify)
     return "OK"
 
